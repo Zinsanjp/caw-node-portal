@@ -16,6 +16,8 @@ Live list:
 
 The page does not run on GitHub: opening `index.html` in the repository only shows its source. To run it, download `index.html` and open the downloaded file in a browser. No build step, no server.
 
+The repository is private now, so it cannot be published as a web page. If it becomes public, it could be opened in a browser directly with GitHub Pages, without downloading the file. (On a free plan, GitHub Pages needs a public repository. Not verified for this organization's plan.)
+
 ## Scope
 
 The page only does what a single HTML file can do on its own, in the visitor's browser. There is no server component, and none is needed at this stage. Adding more features (for example, reading a node's health or statistics, or keeping a shared curated list) would need a server, because most node endpoints cannot be read from a browser. We have decided that is not needed for now.
