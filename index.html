@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAW Node Portal (mock)</title>
+<style>
+:root{--bg:#000;--bg2:#0a0a0a;--card:#171717;--card2:#222;--fg:#fff;--mute:#919aae;--line:rgba(255,255,255,.12);--pri:#f7b72b;--acc:#00f0ff;--ok:#aceb3f;--warn:#f7e545;--bad:#de71a4;--navy:#161628}
+@media (prefers-color-scheme:light){:root{--bg:#fff;--bg2:#fff;--card:#f6f6f7;--card2:#eceef1;--fg:#111;--mute:#5d6678;--line:#d6d9e0;--pri:#c98a00;--acc:#0a6fa8;--ok:#3f8f00;--warn:#9a7a00;--bad:#c2417c}}
+*{box-sizing:border-box}
+body{margin:0;color:var(--fg);background:var(--bg);background-image:linear-gradient(to right,var(--bg) 0%,var(--bg2) 15%,var(--bg2) 85%,var(--bg) 100%);background-attachment:fixed;font:15px/1.55 Inter,system-ui,"Noto Sans JP",sans-serif}
+main{max-width:880px;margin:0 auto;padding:16px 16px 32px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+header img{width:52px;height:52px;border-radius:50%}
+h1{font:600 28px/1.15 Fraunces,Georgia,serif;margin:0}
+h2{font:600 18px/1.2 Fraunces,Georgia,serif;margin:22px 0 6px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--pri)}
+.sub{color:var(--mute);margin:0 0 8px}
+.banner{border:1px dashed var(--pri);color:var(--pri);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:12.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 14px;margin:6px 0;display:grid;grid-template-columns:1fr auto;gap:4px 14px}
+.card:hover{background:var(--card2)}
+.name{font-weight:600;overflow-wrap:anywhere}.meta{color:var(--mute);font-size:12.5px}
+.lat{font-variant-numeric:tabular-nums;text-align:right;font-weight:700;min-width:130px}.lat .sub2{display:block;font-weight:400;font-size:11.5px;color:var(--mute)}
+.bar{height:6px;border-radius:99px;background:var(--card2);margin-top:2px;overflow:hidden}.card:hover .bar{background:var(--bg)}
+.bar i{display:block;height:100%;width:0;background:var(--mute);border-radius:99px;transition:width .5s,background .5s}
+.comment{grid-column:1/-1;font-size:13.5px;border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.comment.empty{color:var(--mute);font-style:italic}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mute)}
+.fixed{border-color:var(--pri)}.fixed .tag{border-color:var(--pri);color:var(--pri)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+button{font:inherit;font-weight:600;border:0;background:var(--pri);color:var(--navy);border-radius:99px;padding:6px 16px;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.lang{margin-left:auto;display:flex;gap:4px}.lang button{padding:3px 12px;background:transparent;color:var(--mute);border:1px solid var(--line);font-size:12.5px}.lang button.on{background:var(--pri);color:var(--navy);border-color:var(--pri)}
+.badges{margin-top:5px;display:flex;flex-wrap:wrap;gap:5px}.badge{font-size:11.5px;border:1px solid var(--line);border-radius:99px;padding:0 9px;color:var(--mute);white-space:nowrap}.badge{cursor:help}.badge::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mute);margin-right:6px}.badge.ok{color:var(--ok);border-color:var(--ok)}.badge.ok::before{background:var(--ok)}.badge.bad{color:var(--bad);border-color:var(--bad)}.badge.bad::before{background:var(--bad)}.badge.warn{color:var(--warn);border-color:var(--warn)}.badge.warn::before{background:var(--warn)}.badge.hand{color:var(--pri);border-color:var(--pri)}.badge.hand::before{background:var(--pri)}
+.tip{font-size:12.5px;color:var(--mute);margin-top:6px;border-left:3px solid var(--pri);padding-left:8px}
+.go{grid-column:2;justify-self:end;font-size:13.5px}
+@media (max-width:560px){.card{grid-template-columns:1fr}.lat{text-align:left;min-width:0}.go{grid-column:1;justify-self:start}}
+</style></head><body><main>
+<header><div><h1>CAW Node Portal</h1>
+<p class="sub" style="margin:0" data-i18n="sub">ノードを選んで参加する入口(仮の案)</p></div><div class="lang"><button type="button" data-lang="ja">JP</button><button type="button" data-lang="en">EN</button></div></header>
+<div class="banner" data-i18n="mock">モック表示です。一覧は 2026-10-25 に cawnest.com の /api/instances から取得した実データ(重複除去済み)。コメントは仮文です。レイテンシは、このブラウザから各ノードへの往復時間です。</div>
+<button id="re" data-i18n="measure">今すぐ測定</button> <div class="meta" id="liveinfo" style="margin:6px 0"></div><span class="meta" data-i18n="auto">5秒ごとに自動更新(タブが裏のときは停止)</span>
+<h2 data-i18n="h_main">本流</h2>
+<div class="card fixed" id="gil"><div><span class="name">https://test2.caw.social</span><span class="tag" data-i18n="fixed">固定</span><span class="tag">Gilgamesh</span><div class="meta" data-i18n="main_meta">本流のノード(レジストリには未登録)</div><div class="badges"></div></div><div class="lat"><span>—</span><span class="sub2"></span><div class="bar"><i></i></div></div><div class="comment empty" data-i18n="nocomment">(コメントはまだありません)</div><a class="go" href="https://test2.caw.social" target="_blank" rel="noopener noreferrer" data-i18n="open">このノードを開く</a></div>
+<h2 data-i18n="h_reg">レジストリに登録されたノード</h2><div class="banner" data-i18n="caution">注意: ここに並ぶのは、レジストリへの自己申告です。誰でも登録でき、正規のノードかどうかは確認していません。開く前に、運営者を確かめてください。</div><div id="normal"></div>
+<h2 data-i18n="h_lab">Lab ノード(試験用)</h2><div id="lab"></div>
+<div class="card"><div><span class="name">https://lab.cawnest.com</span><span class="tag" data-i18n="planned">計画中・未登録</span><div class="meta" data-i18n="lab_meta">段階1ではレジストリに登録しない予定</div></div><div class="lat">—</div></div>
+</main>
+<script>
+const NODES=[{"apiUrl": "https://v2.nyaromesama.com", "regs": 1, "latest": 1, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://tencawffee.com", "regs": 2, "latest": 4, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://v2.cawobservatory.net", "regs": 2, "latest": 81, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://cawnest.com", "regs": 18, "latest": 49, "own": true, "activeAny": true, "comment": "Sample comment: Zin's V2 node. Full node with search and replication.", "group": "normal"}, {"apiUrl": "https://caw-node-api.takstarjp.workers.dev", "regs": 63, "latest": 91, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://dark-caw.com", "regs": 2, "latest": 10, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://node.biancamesh.com", "regs": 1, "latest": 40, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://node.ahdmesh.com", "regs": 1, "latest": 41, "own": true, "activeAny": true, "comment": "", "group": "normal"}, {"apiUrl": "https://lab.tencaw-node.com", "regs": 1, "latest": 50, "own": true, "activeAny": true, "comment": "Sample comment: test node for upstream pull requests.", "group": "lab"}];
+const I={
+ja:{sub:'ノードを選んで参加する入口(仮の案)',mock:'モック表示です。一覧は、各ノードの /api/instances を、このブラウザが取得して集計します(取得できるまでは、2026-10-25 のスナップショット)。コメントは仮文です。レイテンシは、このブラウザから各ノードへの往復時間です。',measure:'今すぐ測定',auto:'5秒ごとに自動更新(タブが裏のときは停止)',h_main:'本流',fixed:'固定',main_meta:'本流のノード(レジストリには未登録)',nocomment:'(コメントはまだありません)',open:'このノードを開く',h_reg:'レジストリに登録されたノード',caution:'注意: ここに並ぶのは、レジストリへの自己申告です。誰でも登録でき、正規のノードかどうかは確認していません。開く前に、運営者を確かめてください。下のバッジは、ここから確かめられることだけを示すもので、ノードが正規であることの証明ではありません。',h_lab:'Lab ノード(試験用)',planned:'計画中・未登録',lab_meta:'段階1ではレジストリに登録しない予定',b_own:'登録者の鍵で登録',b_other:'登録者の鍵と検証者アドレスが別',b_act:'レジストリで有効',b_inact:'レジストリで無効',b_up:'応答あり',b_down:'応答なし',b_wait:'測定中',b_hand:'手動で選定',t_own:'登録を送ったアカウントが、登録された検証者アドレスと同じです。この URL のサーバーを動かしている人までは、分かりません。',t_other:'登録を送ったアカウントが、登録された検証者アドレスと別です。',t_act:'レジストリ上で、この URL の登録のうち少なくとも 1 つが有効です(スナップショット時点)。',t_inact:'レジストリ上で、この URL の登録はすべて無効です。',t_up:'いま、このブラウザからの要求に、ノードが応答しました。',t_down:'いま、このブラウザからの要求に、ノードが応答しませんでした(停止中、またはブラウザからの読み取りを許可していない場合があります)。',t_wait:'測定中です。',t_hand:'私たちが手で選んだノードです。',b_unseen:'今の一覧にない',t_unseen:'応答したノードのどの一覧にも、いま、この URL は載っていません(スナップショットにだけあります)。',t_seen:'一覧を返したノードのうち、この数のノードが、この登録(最新の有効なもの)を、自分のレジストリのデータに持っています。多数決ではなく、正しさの証明でもありません。1 台だけが持っている登録は、そのノードの主張にすぎません。',b_partial:'一部問題あり',t_partial:'このノードが返した登録の一覧は、他の多くのノードより、かなり少なくなっています(たとえば、自分の登録だけを返している、レジストリの取り込みが途中、など)。ノード全体の問題とは限りません。',b_empty:'一部問題あり',t_empty:'このノードが返した登録の一覧は、空です(レジストリを、まだ取り込んでいない可能性があります)。ノード全体の問題とは限りません。',b_badurl:'URL を測定しない',t_badurl:'この URL は、安全のため、測定もリンクもしません(https 以外、ポート指定、IP アドレス、内部名など)。'},
+en:{sub:'A gateway to pick a node and join (draft)',mock:'Mock. This browser fetches /api/instances from each node and builds the list (until then, the snapshot of 2026-10-25). Comments are placeholders. Latency is the round-trip time from this browser to each node.',measure:'Measure now',auto:'Updates every 5 s (paused while the tab is hidden)',h_main:'Mainline',fixed:'Fixed',main_meta:'Mainline node (not in the registry)',nocomment:'(No comment yet)',open:'Open this node',h_reg:'Nodes in the registry',caution:'Caution: these entries are self-reported to the registry. Anyone can register, and we have not verified that a node is legitimate. Check who runs it before you open it. The badges below only show what can be checked from here; they do not prove that a node is legitimate.',h_lab:'Lab nodes (testing)',planned:'Planned, not registered',lab_meta:'Will not be registered in the registry in stage 1',b_own:'Registered by its own key',b_other:'Registered by another key',b_act:'Active in registry',b_inact:'Inactive in registry',b_up:'Responding',b_down:'No response',b_wait:'Measuring',b_hand:'Hand-picked',t_own:'The account that sent the registration is the same as the registered validator address. It does not show who runs the server at this URL.',t_other:'The account that sent the registration is different from the registered validator address.',t_act:'At least one registration for this URL is marked active in the registry (as of the snapshot).',t_inact:'All registrations for this URL are marked inactive in the registry.',t_up:'The node answered this browser just now.',t_down:'The node did not answer this browser just now (it may be down, or it may not allow browsers to read it).',t_wait:'Measuring.',t_hand:'A node we chose by hand.',b_unseen:'Not in the live lists',t_unseen:'None of the nodes that answered lists this URL now (it is only in the snapshot).',t_seen:'This many of the nodes that returned a list have this registration (the latest active one) in their own registry data. It is not a vote and not proof that the entry is right. An entry that only one node has is just that node\'s claim.',b_partial:'Some issues',t_partial:"The registry list this node returns is much shorter than that of most other nodes (for example it lists only its own registrations, or its registry sync is incomplete). This does not mean the whole node has a problem.",b_empty:'Some issues',t_empty:'The registry list this node returns is empty (it may not have synced the registry yet). This does not mean the whole node has a problem.',b_badurl:'URL not measured',t_badurl:'For safety this URL is neither measured nor linked (not https, has a port, is an IP address or an internal name, and so on).'}
+};
+let lang='en';
+try{lang=localStorage.getItem('lang')||''}catch(e){lang=''}
+if(lang!=='ja'&&lang!=='en')lang=(navigator.language||'').toLowerCase().startsWith('ja')?'ja':'en';
+function showTip(e){
+  const col=e.parentNode.parentNode;let tip=col.querySelector('.tip');
+  const txt=e.title;
+  if(tip&&tip.textContent===txt){tip.remove();return}
+  if(!tip){tip=document.createElement('div');tip.className='tip';col.appendChild(tip)}
+  tip.textContent=txt;
+}
+document.addEventListener('click',ev=>{if(!ev.target.closest('.badge'))for(const t of document.querySelectorAll('.tip'))t.remove()});
+function badge(box,cls,key,text){
+  const e=document.createElement('span');e.className='badge '+cls;e.textContent=text||I[lang][key];e.title=I[lang]['t_'+key.slice(2)];e.tabIndex=0;
+  e.onclick=()=>showTip(e);
+  e.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();showTip(e)}};
+  box.appendChild(e);
+}
+// Only plain https hostnames are measured or linked: the registry is open to anyone, so an entry can hold any string
+// (javascript: links, localhost, IP addresses, ports). Returns the origin, or null.
+function safeUrl(u){
+  try{
+    if(typeof u!=='string'||u.length>200)return null;
+    const x=new URL(u);
+    if(x.protocol!=='https:'||x.username||x.password||x.port)return null;
+    if(x.pathname!=='/'||x.search||x.hash)return null;
+    const h=x.hostname.toLowerCase();
+    if(!h.includes('.')||h.includes(':')||/^\d+(\.\d+){3}$/.test(h))return null;
+    if(h==='localhost'||/\.(local|localhost|internal|lan|home|corp)$/.test(h))return null;
+    return x.origin;
+  }catch(e){return null}
+}
+function renderBadges(r){
+  if(!r.badges)return;
+  r.badges.replaceChildren();
+  if(r.hand){badge(r.badges,'hand','b_hand');if(r.compl==='partial')badge(r.badges,'warn','b_partial');else if(r.compl==='empty')badge(r.badges,'warn','b_empty')}
+  else if(r.url===null){badge(r.badges,'bad','b_badurl')}
+  else{
+    badge(r.badges,r.n.own?'ok':'',r.n.own?'b_own':'b_other');
+    badge(r.badges,r.n.activeAny?'ok':'bad',r.n.activeAny?'b_act':'b_inact');
+    if(r.compl==='partial')badge(r.badges,'warn','b_partial');else if(r.compl==='empty')badge(r.badges,'warn','b_empty');
+    if(r.n.seen!==undefined&&r.n.N>=2){
+      if(r.n.seen===0)badge(r.badges,'','b_unseen');
+      else badge(r.badges,r.n.seen===r.n.N?'ok':(r.n.seen*2>=r.n.N?'':'bad'),'b_seen',lang==='ja'?'掲載 '+r.n.seen+'/'+r.n.N+' ノード':'Listed by '+r.n.seen+' of '+r.n.N+' nodes');
+    }
+  }
+  if(r.url===null)return;
+  if(r.state==='ok')badge(r.badges,'ok','b_up');else if(r.state==='err')badge(r.badges,'bad','b_down');else badge(r.badges,'','b_wait');
+}
+function renderRow(r){
+  if(r.m)r.m.textContent=(lang==='ja'?'最新の instanceId ':'Latest instanceId ')+(r.n.latest??'—');
+  renderBadges(r);
+  if(r.state==='ok'){
+    r.t.textContent=r.ms+' ms';r.t.style.color=color(r.ms);
+    r.av.textContent=lang==='ja'?'直近'+r.hist.length+'回の平均 '+r.avg+' ms':'Average of last '+r.hist.length+': '+r.avg+' ms';
+  }else if(r.state==='err'){
+    r.t.textContent=lang==='ja'?'応答なし':'No response';r.t.style.color='var(--bad)';
+  }
+}
+let live=null;
+function renderLive(){
+  const e=document.getElementById('liveinfo');
+  if(!live){e.textContent=lang==='ja'?'ライブ取得を待っています(いまは 2026-10-25 のスナップショット)':'Waiting for the live lists (showing the 2026-10-25 snapshot for now)';return}
+  const tm=live.time.toLocaleTimeString();
+  e.textContent=lang==='ja'
+    ?'ライブ:一覧を返した '+live.N+' 台のノードから集計('+tm+')'+(live.incomplete?' / 一覧が不完全な '+live.incomplete+' 台は数えません':'')+(live.bad?' / 許可しない URL の登録 '+live.bad+' 件は表示しません':'')+(live.hidden?' / 上限のため '+live.hidden+' 件は表示しません':'')
+    :'Live: built from the lists of '+live.N+' nodes ('+tm+')'+(live.incomplete?' / '+live.incomplete+' with an incomplete list are not counted':'')+(live.bad?' / '+live.bad+' entries with a URL we do not allow are not shown':'')+(live.hidden?' / '+live.hidden+' more not shown (limit)':'');
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  for(const e of document.querySelectorAll('[data-i18n]'))e.textContent=I[lang][e.dataset.i18n];
+  for(const b of document.querySelectorAll('.lang button'))b.classList.toggle('on',b.dataset.lang===lang);
+  rows.forEach(renderRow);renderLive();
+}
+function setLang(l){lang=l;try{localStorage.setItem('lang',l)}catch(e){}applyLang()}
+for(const b of document.querySelectorAll('.lang button'))b.onclick=()=>setLang(b.dataset.lang);
+function color(ms){return ms<400?'var(--ok)':ms<1200?'var(--warn)':'var(--bad)'}
+const rows=[];const byUrl=new Map();const views=new Map();const MAXROWS=40;
+function build(n){
+  const c=document.createElement('div');c.className='card';
+  const l=document.createElement('div');
+  const url=safeUrl(n.apiUrl);
+  let nm;
+  if(url){nm=document.createElement('a');nm.href=url;nm.target='_blank';nm.rel='noopener noreferrer'}else{nm=document.createElement('span')}
+  nm.className='name';nm.textContent=String(n.apiUrl).slice(0,120);l.appendChild(nm);
+  const m=document.createElement('div');m.className='meta';
+  l.appendChild(m);const bx=document.createElement('div');bx.className='badges';l.appendChild(bx);c.appendChild(l);
+  const w=document.createElement('div');w.className='lat';const t=document.createElement('span');t.textContent='—';w.appendChild(t);const av=document.createElement('span');av.className='sub2';w.appendChild(av);const bar=document.createElement('div');bar.className='bar';const fill=document.createElement('i');bar.appendChild(fill);w.appendChild(bar);c.appendChild(w);
+  if(n.comment){const cm=document.createElement('div');cm.className='comment';cm.textContent=n.comment;c.appendChild(cm);}
+  const row={n,url,t,fill,av,m,badges:bx,card:c,hist:[],state:null};rows.push(row);if(url)byUrl.set(url,row);renderRow(row);return c;
+}
+for(const n of NODES){document.getElementById(n.group).appendChild(build(n))}
+const CAP=2000; // バーが満タンになる時間(ms)
+function parseView(list){
+  const out=[];
+  for(const i of list.slice(0,500)){
+    if(!i||typeof i.instanceId!=='number'||typeof i.apiUrl!=='string'||typeof i.owner!=='string'||typeof i.validatorAddress!=='string')continue;
+    out.push({id:i.instanceId,raw:i.apiUrl,url:safeUrl(i.apiUrl),owner:i.owner.toLowerCase(),val:i.validatorAddress.toLowerCase(),active:i.active===true});
+  }
+  return out;
+}
+async function measure(r){
+  if(!r.url){r.state='skip';renderRow(r);return}
+  const t0=performance.now();
+  try{
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),4500);
+    const res=await fetch(r.url+'/api/instances?_='+Date.now(),{signal:ctl.signal,cache:'no-store'});
+    clearTimeout(to);
+    if(!res.ok)throw new Error('http '+res.status);
+    const d=await res.json();
+    if(!d||!Array.isArray(d.instances))throw new Error('not an instance list');
+    views.set(r.url,parseView(d.instances));
+    const ms=Math.round(performance.now()-t0);
+    r.hist.push(ms);if(r.hist.length>10)r.hist.shift();
+    r.ms=ms;r.state='ok';
+    r.fill.style.width=Math.max(4,Math.min(100,ms/CAP*100))+'%';r.fill.style.background=color(ms);
+    const avg=Math.round(r.hist.reduce((a,b)=>a+b,0)/r.hist.length);
+    r.avg=avg;renderRow(r);
+  }catch(e){
+    views.delete(r.url);
+    r.state='err';renderRow(r);
+    r.fill.style.width='100%';r.fill.style.background='var(--bad)';
+  }
+}
+// Merge what every responding node lists. An entry's "seen" is how many of those nodes list the same registration.
+function aggregate(){
+  // A node whose list is empty has not synced the registry; it is not counted, so it does not look like a disagreement.
+  const lens=[...views.values()].map(v=>v.length).filter(n=>n>0).sort((a,b)=>a-b);
+  const ref=lens.length?lens[Math.floor(lens.length/2)]:0;
+  const status=new Map();
+  for(const [u,v] of views)status.set(u,v.length===0?'empty':(v.length<ref*0.5?'partial':'full'));
+  const vs=[...views].filter(([u])=>status.get(u)==='full').map(([,v])=>v);const N=vs.length;const tc=new Map();
+  for(const v of vs){
+    const once=new Set();
+    for(const t of v){
+      const k=t.id+'|'+t.raw+'|'+t.owner+'|'+t.val+'|'+t.active;
+      if(once.has(k))continue;once.add(k);
+      const e=tc.get(k);if(e)e.n++;else tc.set(k,{t,n:1});
+    }
+  }
+  const by=new Map();
+  for(const e of tc.values()){const key=e.t.url||('!'+e.t.raw.slice(0,120));if(!by.has(key))by.set(key,[]);by.get(key).push(e)}
+  const res=[];
+  for(const [key,list] of by){
+    const act=list.filter(x=>x.t.active);
+    const best=(act.length?act:list).reduce((a,b)=>b.t.id>a.t.id?b:a);
+    res.push({url:list[0].t.url,regs:new Set(list.map(x=>x.t.id)).size,latest:best.t.id,own:best.t.owner===best.t.val,activeAny:act.length>0,seen:best.n,N});
+  }
+  return {res,N,incomplete:views.size-N,status};
+}
+// Order: responding nodes with a complete list first, then those with "some issues", then those that did not answer.
+function rank(r){return r.state==='ok'?((r.compl==='partial'||r.compl==='empty')?1:0):2}
+function sortCards(){
+  const box=document.getElementById('normal');
+  const list=rows.filter(r=>!r.hand&&r.card&&r.card.parentNode===box).sort((a,b)=>rank(a)-rank(b)||String(a.n.apiUrl).localeCompare(String(b.n.apiUrl)));
+  const cur=[...box.children];
+  if(list.every((r,i)=>cur[i]===r.card))return;
+  for(const r of list)box.appendChild(r.card);
+}
+function updateFromViews(){
+  if(!views.size)return;
+  const ag=aggregate();const agg=ag.res;const present=new Set();let bad=0,hidden=0;
+  for(const r of rows){if(r.url&&ag.status.has(r.url))r.compl=ag.status.get(r.url);else r.compl=undefined}
+  if(!ag.N){live={N:0,incomplete:ag.incomplete,time:new Date(),bad:0,hidden:0};rows.forEach(renderRow);renderLive();return}
+  for(const a of agg){
+    if(!a.url){bad++;continue}
+    present.add(a.url);
+    const r=byUrl.get(a.url);
+    if(r){Object.assign(r.n,{regs:a.regs,latest:a.latest,own:a.own,activeAny:a.activeAny,seen:a.seen,N:a.N});renderRow(r)}
+    else if(document.querySelectorAll('#normal .card').length<MAXROWS){
+      document.getElementById('normal').appendChild(build({apiUrl:a.url,regs:a.regs,latest:a.latest,own:a.own,activeAny:a.activeAny,seen:a.seen,N:a.N,comment:''}));
+    }else hidden++;
+  }
+  for(const [u,r] of byUrl)if(!present.has(u)){r.n.seen=0;r.n.N=ag.N;renderRow(r)}
+  rows.forEach(renderRow);sortCards();
+  live={N:ag.N,incomplete:ag.incomplete,time:new Date(),bad,hidden};renderLive();
+}
+let busy=false;
+async function all(){
+  if(busy)return;busy=true;
+  try{await Promise.all(rows.map(measure));updateFromViews()}finally{busy=false}
+}
+rows.unshift({state:null,url:safeUrl('https://test2.caw.social'),n:{apiUrl:'https://test2.caw.social'},t:document.querySelector('#gil .lat span'),fill:document.querySelector('#gil .bar i'),av:document.querySelector('#gil .sub2'),badges:document.querySelector('#gil .badges'),hand:true,hist:[]});
+document.getElementById('re').onclick=all;
+applyLang();
+all();
+setInterval(()=>{if(!document.hidden)all()},5000);
+</script></body></html>
